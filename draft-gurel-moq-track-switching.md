@@ -1,7 +1,7 @@
 ---
 title: "Track Switching in Media over QUIC Transport"
 abbrev: moq-track-switching
-docname: draft-gurel-moq-track-switching
+docname: draft-gurel-moq-track-switching-latest
 date: {DATE}
 category: std
 
@@ -155,10 +155,38 @@ An example of the different tracks indicated in the catalog is shown below.
 ~~~
 {
     "tracks":[
-        {"name": "hd", "selectionParams": {"width": 1920, "height": 1080, "bitrate":5000000, "framerate": 30}, "altGroup": 1},
-        {"name": "md", "selectionParams": {"width": 720, "height": 640, "bitrate":3000000, "framerate": 30}, "altGroup": 1},
-        {"name": "sd", "selectionParams": {"width": 192, "height": 144, "bitrate":500000, "framerate": 30}, "altGroup": 1},
-        {"name": "audio", "selectionParams": {"codec": "opus", "samplerate": 48000, "channelConfig": "2", "bitrate": 32000} }
+        {
+          "name": "hd",
+          "selectionParams": {
+            "width": 1920, "height": 1080,
+            "bitrate": 5000000, "framerate": 30
+          },
+          "altGroup": 1
+        },
+        {
+          "name": "md",
+          "selectionParams": {
+            "width": 720, "height": 640,
+            "bitrate": 3000000, "framerate": 30
+          },
+          "altGroup": 1
+        },
+        {
+          "name": "sd",
+          "selectionParams": {
+            "width": 192, "height": 144,
+            "bitrate": 500000, "framerate": 30
+          },
+          "altGroup": 1
+        },
+        {
+          "name": "audio",
+          "selectionParams": {
+            "codec": "opus", "samplerate": 48000,
+            "channelConfig": "2", "bitrate": 32000
+          }
+        }
+      }
     ]
 }
 ~~~
