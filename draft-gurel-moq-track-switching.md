@@ -1,7 +1,7 @@
 ---
-title: "Track Switching in Media Over QUIC Transport"
+title: "Track Switching in Media over QUIC Transport"
 abbrev: moq-track-switching
-docname: draft-gurel-moq-track-switching-latest
+docname: draft-gurel-moq-track-switching
 date: {DATE}
 category: std
 
@@ -20,11 +20,11 @@ author:
     ins: Z. Gurel
     name: Zafer Gurel
     organization: Ozyegin University
-    email: zafer.gurel@ozyegin.edu.tr
+    email: zafer.gurel@ozu.edu.tr
 
   -
     ins: A. Begen
-    name: Ali Cengiz Begen
+    name: Ali Begen
     organization: Networked Media
     email: ali.begen@networked.media
 
@@ -36,9 +36,9 @@ informative:
 
 --- abstract
 
-This document defines a solution of switching tracks in media.
+This document defines a solution for switching tracks in media.
 More particularly, the solution provides a seamless switching that
-ensures there is no overlapping or gap between download and/or
+ensures there is no overlapping or gap between the download and/or
 transmission of two tracks when they are alternatives to each other.
 
 --- middle
@@ -50,7 +50,7 @@ delivery over Media Over QUIC Transport (MOQT) {{MoQTransport}}. Switching track
 is necessary for a variety of reasons, such as changing the
 quality, the language of the media, or the type of the media (e.g., switching from a video to
 an audio track). The solution described in this document ensures
-that there is no overlapping or gap between download and/or
+that there is no overlapping or gap between the download and/or
 transmission of two tracks when they are alternatives to each other.
 
 ## Terms and Definitions
@@ -105,7 +105,7 @@ Track:
 This document uses the conventions detailed in ({{?RFC9000, Section 1.3}})
 when describing the binary encoding.
 
-As a quick reference, the following list provides a non normative summary
+As a quick reference, the following list provides a non-normative summary
 of the parts of RFC9000 field syntax that are used in this specification.
 
 x (L):
@@ -147,7 +147,7 @@ which are alternatives of each other and indicated so in the catalog {{CommonCat
 The subscriber subscribes to one of the tracks from an altGroup
 in the catalog. During the session, the subscriber may switch from
 a currently consumed track to any other alternate track from the
-catalog due to, for example, change in available bandwidth. To do this,
+catalog due to, for example, changes in available bandwidth. To do this,
 the subscriber can subscribe to a new track and unsubscribe from the old track.
 Such an action is done by sending a SUBSCRIBE message to the relay.
 An example of the different tracks indicated in the catalog is shown below.
@@ -162,10 +162,10 @@ An example of the different tracks indicated in the catalog is shown below.
     ]
 }
 ~~~
-{: #moq-transport-catalog-snippet title="An Example of the Different Tracks"}
+{: #moq-transport-catalog-snippet title="An example of the different tracks."}
 
-## Problem
-A relay does not have access/visibility to the catalog. Therefore, they are unaware when two tracks are alternates. An example of the existing SUBSCRIBE message format is shown below.
+## The Problem and Solution Approaches
+Relays do not have access/visibility to the catalog. Therefore, they are unaware when two tracks are alternates. An example of the existing SUBSCRIBE message format is shown below.
 
 ~~~
 SUBSCRIBE Message {
@@ -182,11 +182,11 @@ SUBSCRIBE Message {
   Subscribe Parameters (..) ...
 }
 ~~~
-{: #moq-transport-subscribe-format title="MOQT SUBSCRIBE Message"}
+{: #moq-transport-subscribe-format title="MOQT SUBSCRIBE message."}
 
-It is noted that the existing SUBSCRIBE message that the subscriber transmits to the relay only contains information of current track and does not indicate that the client is switching to a new track for the same media content. Therefore, when receiving a SUBSCRIBE message from the subscriber for switching to the new track, the relay may download and transmit both the new track and the old track of the same media content, which can create a bitrate spike and in turn can aggravate an already congested link. Additionally, the player/client application on the subscriber will have to process (e.g., parse and decode) the same media content in overlapping times, which is a waste of computational power.
+Existing SUBSCRIBE message that the subscriber transmits to the relay only contains information of the current track and does not indicate that the client is switching to a new track for the same media content. Therefore, when receiving a SUBSCRIBE message from the subscriber for switching to the new track, the relay may download and transmit both the new track and the old track of the same media content, which can create a bitrate spike and in turn can aggravate an already congested link. Additionally, the player/client application on the subscriber will have to process (e.g., parse and decode) the same media content in overlapping times, which is a waste of computational power.
 
-## Solution 1 (altTrackGroup)
+### Solution 1 (altTrackGroup)
 
 A new parameter altTrackGroup can be added to every SUBSCRIBE message. altTrackGroup is the identifier for a group of alternative tracks within the scope of a track namespace. The value of the altTrackGroup identifier may be the same as the altGroup identifier used in the catalog or a different one. An example of a SUBSCRIBE message that includes the identifier altTrackGroup is shown below.
 
@@ -206,9 +206,9 @@ SUBSCRIBE Message {
   Subscribe Parameters (..) ...
 }
 ~~~
-{: #moq-transport-subscribe-format-atg title="MOQT SUBSCRIBE Message with altTrackGroup"}
+{: #moq-transport-subscribe-format-atg title="MOQT SUBSCRIBE message with altTrackGroup."}
 
-## Solution 2 (Switch Track Alias)
+### Solution 2 (Switch Track Alias)
 
 The SUBSCRIBE message can contain an identifier Switch Track Alias such that the Switch Track Alias = Track Alias of the active subscription. This way, this ID in the SUBSCRIBE message can indicate to the relay that this switching request is for an alternative track of the same media content of the current track and assists the relay in seamless switching.  An example of a SUBSCRIBE message that includes the identifier Switch Track Alias is shown below.
 
@@ -228,4 +228,4 @@ SUBSCRIBE Message {
   Subscribe Parameters (..) ...
 }
 ~~~
-{: #moq-transport-subscribe-format-sta title="MOQT SUBSCRIBE Message with Switch Track Alias"}
+{: #moq-transport-subscribe-format-sta title="MOQT SUBSCRIBE message with Switch Track Alias."}
