@@ -224,12 +224,12 @@ SUBSCRIBE Message {
   Track Alias (i),
   Track Namespace (b),
   Track Name (b),
-  altTrackGroup (i),
   Filter Type (i),
   [StartGroup (i),
    StartObject (i)],
   [EndGroup (i),
    EndObject (i)],
+  [altTrackGroup (i)],
   Number of Parameters (i),
   Subscribe Parameters (..) ...
 }
@@ -246,12 +246,12 @@ SUBSCRIBE Message {
   Track Alias (i),
   Track Namespace (b),
   Track Name (b),
-  Switch Track Alias (i),
   Filter Type (i),
   [StartGroup (i),
    StartObject (i)],
   [EndGroup (i),
    EndObject (i)],
+  [Switch Track Alias (i)],
   Number of Parameters (i),
   Subscribe Parameters (..) ...
 }
