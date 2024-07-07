@@ -143,7 +143,7 @@ required value.
 
 In MOQT communications, the publisher announces the availability
 of multiple encodings of a media content in different tracks,
-which are alternatives of each other and indicated so in the catalog.
+which are alternatives of each other and indicated so in the catalog {{CommonCatalogFormat}}.
 The subscriber subscribes to one of the tracks from an altGroup
 in the catalog. During the session, the subscriber may switch from
 a currently consumed track to any other alternate track from the
