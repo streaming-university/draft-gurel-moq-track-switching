@@ -30,9 +30,9 @@ author:
 
 normative:
   MoQTransport: I-D.ietf-moq-transport
-  CommonCatalogFormat: I-D.ietf-moq-catalogformat
 
 informative:
+  CommonCatalogFormat: I-D.ietf-moq-catalogformat
 
 --- abstract
 
@@ -143,7 +143,7 @@ required value.
 
 In MOQT communications, the publisher announces the availability
 of multiple encodings of a media content in different tracks,
-which are alternatives of each other and indicated so in the catalog {{CommonCatalogFormat}}.
+which are alternatives of each other and indicated so in the catalog.
 The subscriber subscribes to one of the tracks from an altGroup
 in the catalog. During the session, the subscriber may switch from
 a currently consumed track to any other alternate track from the
@@ -257,3 +257,11 @@ SUBSCRIBE Message {
 }
 ~~~
 {: #moq-transport-subscribe-format-sta title="MOQT SUBSCRIBE message with Switch Track Alias."}
+
+# Security Considerations {#security}
+
+TODO: Expand this section.
+
+# IANA Considerations {#iana}
+
+TODO: Expand this section.
