@@ -197,15 +197,19 @@ Relays do not have access/visibility to the catalog. Therefore, they are unaware
 
 ~~~
 SUBSCRIBE Message {
+  Type (i) = 0x3,
+  Length (i),
   Subscribe ID (i),
   Track Alias (i),
-  Track Namespace (b),
-  Track Name (b),
+  Track Namespace (tuple),
+  Track Name Length (i),
+  Track Name (..),
+  Subscriber Priority (8),
+  Group Order (8),
   Filter Type (i),
   [StartGroup (i),
    StartObject (i)],
-  [EndGroup (i),
-   EndObject (i)],
+  [EndGroup (i)],
   Number of Parameters (i),
   Subscribe Parameters (..) ...
 }
@@ -220,15 +224,19 @@ A new parameter altTrackGroup can be added to every SUBSCRIBE message. altTrackG
 
 ~~~
 SUBSCRIBE Message {
+  Type (i) = 0x3,
+  Length (i),
   Subscribe ID (i),
   Track Alias (i),
-  Track Namespace (b),
-  Track Name (b),
+  Track Namespace (tuple),
+  Track Name Length (i),
+  Track Name (..),
+  Subscriber Priority (8),
+  Group Order (8),
   Filter Type (i),
   [StartGroup (i),
    StartObject (i)],
-  [EndGroup (i),
-   EndObject (i)],
+  [EndGroup (i)],
   [altTrackGroup (i)],
   Number of Parameters (i),
   Subscribe Parameters (..) ...
@@ -242,15 +250,20 @@ The SUBSCRIBE message can contain an identifier Switch Track Alias such that the
 
 ~~~
 SUBSCRIBE Message {
+  Type (i) = 0x3,
+  Length (i),
   Subscribe ID (i),
   Track Alias (i),
-  Track Namespace (b),
-  Track Name (b),
+  Track Namespace (tuple),
+  Track Name Length (i),
+  Track Name (..),
+  Subscriber Priority (8),
+  Group Order (8),
   Filter Type (i),
   [StartGroup (i),
    StartObject (i)],
-  [EndGroup (i),
-   EndObject (i)],
+  [EndGroup (i)],
+  [altTrackGroup (i)],
   [Switch Track Alias (i)],
   Number of Parameters (i),
   Subscribe Parameters (..) ...
