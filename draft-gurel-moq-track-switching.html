@@ -1392,15 +1392,19 @@ An example of the different tracks indicated in the catalog is shown below.<a hr
           <div class="alignLeft art-text artwork" id="section-2.1-2.1">
 <pre>
 SUBSCRIBE Message {
+  Type (i) = 0x3,
+  Length (i),
   Subscribe ID (i),
   Track Alias (i),
-  Track Namespace (b),
-  Track Name (b),
+  Track Namespace (tuple),
+  Track Name Length (i),
+  Track Name (..),
+  Subscriber Priority (8),
+  Group Order (8),
   Filter Type (i),
   [StartGroup (i),
    StartObject (i)],
-  [EndGroup (i),
-   EndObject (i)],
+  [EndGroup (i)],
   Number of Parameters (i),
   Subscribe Parameters (..) ...
 }
@@ -1422,15 +1426,19 @@ SUBSCRIBE Message {
             <div class="alignLeft art-text artwork" id="section-2.1.1-2.1">
 <pre>
 SUBSCRIBE Message {
+  Type (i) = 0x3,
+  Length (i),
   Subscribe ID (i),
   Track Alias (i),
-  Track Namespace (b),
-  Track Name (b),
+  Track Namespace (tuple),
+  Track Name Length (i),
+  Track Name (..),
+  Subscriber Priority (8),
+  Group Order (8),
   Filter Type (i),
   [StartGroup (i),
    StartObject (i)],
-  [EndGroup (i),
-   EndObject (i)],
+  [EndGroup (i)],
   [altTrackGroup (i)],
   Number of Parameters (i),
   Subscribe Parameters (..) ...
@@ -1454,15 +1462,20 @@ SUBSCRIBE Message {
             <div class="alignLeft art-text artwork" id="section-2.1.2-2.1">
 <pre>
 SUBSCRIBE Message {
+  Type (i) = 0x3,
+  Length (i),
   Subscribe ID (i),
   Track Alias (i),
-  Track Namespace (b),
-  Track Name (b),
+  Track Namespace (tuple),
+  Track Name Length (i),
+  Track Name (..),
+  Subscriber Priority (8),
+  Group Order (8),
   Filter Type (i),
   [StartGroup (i),
    StartObject (i)],
-  [EndGroup (i),
-   EndObject (i)],
+  [EndGroup (i)],
+  [altTrackGroup (i)],
   [Switch Track Alias (i)],
   Number of Parameters (i),
   Subscribe Parameters (..) ...
