@@ -1,0 +1,348 @@
+
+
+
+
+MOQ                                                             Z. Gurel
+Internet-Draft                                        Ozyegin University
+Intended status: Standards Track                                A. Begen
+Expires: 22 August 2025                                  Networked Media
+                                                        18 February 2025
+
+
+              Track Switching in Media over QUIC Transport
+                 draft-gurel-moq-track-switching-latest
+
+Abstract
+
+   This document defines a solution for switching tracks in media.  More
+   particularly, the solution provides a seamless switching that ensures
+   there is no overlapping or gap between the download and/or
+   transmission of two tracks when they are alternatives to each other.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 22 August 2025.
+
+Copyright Notice
+
+   Copyright (c) 2025 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction
+     1.1.  Terms and Definitions
+     1.2.  Notational Conventions
+   2.  Switching Tracks
+     2.1.  The Problem and Solution Approaches
+       2.1.1.  Solution 1 (altTrackGroup)
+       2.1.2.  Solution 2 (Switch Track Alias)
+   3.  Security Considerations
+   4.  IANA Considerations
+   5.  References
+     5.1.  Normative References
+     5.2.  Informative References
+   Authors' Addresses
+
+1.  Introduction
+
+   This document outlines a solution for switching tracks in media
+   delivery over Media Over QUIC Transport (MOQT) [MoQTransport].
+   Switching tracks is necessary for a variety of reasons, such as
+   changing the quality, the language of the media, or the type of the
+   media (e.g., switching from a video to an audio track).  The solution
+   described in this document ensures that there is no overlapping or
+   gap between the download and/or transmission of two tracks when they
+   are alternatives to each other.
+
+1.1.  Terms and Definitions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+   Client:  The party initiating a MoQ transport session.
+
+   Server:  The party accepting an incoming transport session.
+
+   Endpoint:  A Client or Server.
+
+   Producer:  An endpoint sending media over the network.
+
+   Consumer:  An endpoint receiving media over the network.
+
+   Transport session:  A raw QUIC connection or a WebTransport session.
+
+   Congestion:  Packet loss and queuing caused by degraded or overloaded
+      networks.
+
+   Group:  A temporal sequence of objects.  A group represents a join
+      point in a track.
+
+   Object:  An object is an addressable unit whose payload is a sequence
+      of bytes.
+
+   Track:  An encoded bitstream.  Tracks contain a sequential series of
+      one or more groups and are the subscribable entity with MOQT.
+
+1.2.  Notational Conventions
+
+   This document uses the conventions detailed in ([RFC9000],
+   Section 1.3) when describing the binary encoding.
+
+   As a quick reference, the following list provides a non-normative
+   summary of the parts of RFC9000 field syntax that are used in this
+   specification.
+
+   x (L):  Indicates that x is L bits long
+
+   x (i):  Indicates that x holds an integer value using the variable-
+      length encoding as described in ([RFC9000], Section 16)
+
+   x (..):  Indicates that x can be any length including zero bits long.
+      Values in this format always end on a byte boundary.
+
+   x (L) ...:  Indicates that x is repeated zero or more times and that
+      each instance has a length of L
+
+   This document extends the RFC9000 syntax and with the additional
+   field types:
+
+   x (b):  Indicates that x consists of a variable length integer
+      encoding as described in ([RFC9000], Section 16), followed by that
+      many bytes of binary data
+
+   To reduce unnecessary use of bandwidth, variable length integers
+   SHOULD be encoded using the least number of bytes possible to
+   represent the required value.
+
+2.  Switching Tracks
+
+   In MOQT communications, the publisher announces the availability of
+   multiple encodings of a media content in different tracks, which are
+   alternatives of each other and indicated so in the catalog
+   [CommonCatalogFormat].  The subscriber subscribes to one of the
+   tracks from an altGroup in the catalog.  During the session, the
+   subscriber may switch from a currently consumed track to any other
+   alternate track from the catalog due to, for example, changes in
+   available bandwidth.  To do this, the subscriber can subscribe to a
+   new track and unsubscribe from the old track.  Such an action is done
+   by sending a SUBSCRIBE message to the relay.  An example of the
+   different tracks indicated in the catalog is shown below.
+
+   {
+       "tracks":[
+           {
+             "name": "hd",
+             "selectionParams": {
+               "width": 1920, "height": 1080,
+               "bitrate": 5000000, "framerate": 30
+             },
+             "altGroup": 1
+           },
+           {
+             "name": "md",
+             "selectionParams": {
+               "width": 720, "height": 640,
+               "bitrate": 3000000, "framerate": 30
+             },
+             "altGroup": 1
+           },
+           {
+             "name": "sd",
+             "selectionParams": {
+               "width": 192, "height": 144,
+               "bitrate": 500000, "framerate": 30
+             },
+             "altGroup": 1
+           },
+           {
+             "name": "audio",
+             "selectionParams": {
+               "codec": "opus", "samplerate": 48000,
+               "channelConfig": "2", "bitrate": 32000
+             }
+           }
+         }
+       ]
+   }
+
+               Figure 1: An example of the different tracks.
+
+2.1.  The Problem and Solution Approaches
+
+   Relays do not have access/visibility to the catalog.  Therefore, they
+   are unaware when two tracks are alternates.  An example of the
+   existing SUBSCRIBE message format is shown below.
+
+   SUBSCRIBE Message {
+     Type (i) = 0x3,
+     Length (i),
+     Subscribe ID (i),
+     Track Alias (i),
+     Track Namespace (tuple),
+     Track Name Length (i),
+     Track Name (..),
+     Subscriber Priority (8),
+     Group Order (8),
+     Filter Type (i),
+     [StartGroup (i),
+      StartObject (i)],
+     [EndGroup (i)],
+     Number of Parameters (i),
+     Subscribe Parameters (..) ...
+   }
+
+                     Figure 2: MOQT SUBSCRIBE message.
+
+   Existing SUBSCRIBE message that the subscriber transmits to the relay
+   only contains information of the current track and does not indicate
+   that the client is switching to a new track for the same media
+   content.  Therefore, when receiving a SUBSCRIBE message from the
+   subscriber for switching to the new track, the relay may download and
+   transmit both the new track and the old track of the same media
+   content, which can create a bitrate spike and in turn can aggravate
+   an already congested link.  Additionally, the player/client
+   application on the subscriber will have to process (e.g., parse and
+   decode) the same media content in overlapping times, which is a waste
+   of computational power.
+
+2.1.1.  Solution 1 (altTrackGroup)
+
+   A new parameter altTrackGroup can be added to every SUBSCRIBE
+   message. altTrackGroup is the identifier for a group of alternative
+   tracks within the scope of a track namespace.  The value of the
+   altTrackGroup identifier may be the same as the altGroup identifier
+   used in the catalog or a different one.  An example of a SUBSCRIBE
+   message that includes the identifier altTrackGroup is shown below.
+
+   SUBSCRIBE Message {
+     Type (i) = 0x3,
+     Length (i),
+     Subscribe ID (i),
+     Track Alias (i),
+     Track Namespace (tuple),
+     Track Name Length (i),
+     Track Name (..),
+     Subscriber Priority (8),
+     Group Order (8),
+     Filter Type (i),
+     [StartGroup (i),
+      StartObject (i)],
+     [EndGroup (i)],
+     [altTrackGroup (i)],
+     Number of Parameters (i),
+     Subscribe Parameters (..) ...
+   }
+
+            Figure 3: MOQT SUBSCRIBE message with altTrackGroup.
+
+2.1.2.  Solution 2 (Switch Track Alias)
+
+   The SUBSCRIBE message can contain an identifier Switch Track Alias
+   such that the Switch Track Alias = Track Alias of the active
+   subscription.  This way, this ID in the SUBSCRIBE message can
+   indicate to the relay that this switching request is for an
+   alternative track of the same media content of the current track and
+   assists the relay in seamless switching.  An example of a SUBSCRIBE
+   message that includes the identifier Switch Track Alias is shown
+   below.
+
+   SUBSCRIBE Message {
+     Type (i) = 0x3,
+     Length (i),
+     Subscribe ID (i),
+     Track Alias (i),
+     Track Namespace (tuple),
+     Track Name Length (i),
+     Track Name (..),
+     Subscriber Priority (8),
+     Group Order (8),
+     Filter Type (i),
+     [StartGroup (i),
+      StartObject (i)],
+     [EndGroup (i)],
+     [altTrackGroup (i)],
+     [Switch Track Alias (i)],
+     Number of Parameters (i),
+     Subscribe Parameters (..) ...
+   }
+
+         Figure 4: MOQT SUBSCRIBE message with Switch Track Alias.
+
+3.  Security Considerations
+
+   TODO: Expand this section.
+
+4.  IANA Considerations
+
+   TODO: Expand this section.
+
+5.  References
+
+5.1.  Normative References
+
+   [MoQTransport]
+              Curley, L., Pugin, K., Nandakumar, S., Vasiliev, V., and
+              I. Swett, "Media over QUIC Transport", Work in Progress,
+              Internet-Draft, draft-ietf-moq-transport-08, 12 February
+              2025, <https://datatracker.ietf.org/doc/html/draft-ietf-
+              moq-transport-08>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+5.2.  Informative References
+
+   [CommonCatalogFormat]
+              Nandakumar, S., Law, W., and M. Zanaty, "Common Catalog
+              Format for moq-transport", Work in Progress, Internet-
+              Draft, draft-ietf-moq-catalogformat-01, 8 July 2024,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-moq-
+              catalogformat-01>.
+
+   [RFC9000]  Iyengar, J., Ed. and M. Thomson, Ed., "QUIC: A UDP-Based
+              Multiplexed and Secure Transport", RFC 9000,
+              DOI 10.17487/RFC9000, May 2021,
+              <https://www.rfc-editor.org/rfc/rfc9000>.
+
+Authors' Addresses
+
+   Zafer Gurel
+   Ozyegin University
+   Email: zafer.gurel@ozu.edu.tr
+
+
+   Ali Begen
+   Networked Media
+   Email: ali.begen@networked.media
