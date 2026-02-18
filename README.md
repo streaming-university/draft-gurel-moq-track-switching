@@ -2,10 +2,10 @@
 
 This is the working area for the Internet-Draft, "Track Switching in Media over QUIC Transport".
 
-* [Editor's Copy](https://streaming-university.github.io/draft-gurel-moq-track-switching/#go.draft-gurel-moq-track-switching.html)
+* [Editor's Copy](https://moqtail.github.io/draft-gurel-moq-track-switching/#go.draft-gurel-moq-track-switching.html)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-gurel-moq-track-switching)
 * [Working Group Draft](https://datatracker.ietf.org/doc/html/draft-gurel-moq-track-switching)
-* [Compare Editor's Copy to Working Group Draft](https://streaming-university.github.io/draft-gurel-moq-track-switching/#go.draft-gurel-moq-track-switching.diff)
+* [Compare Editor's Copy to Working Group Draft](https://moqtail.github.io/draft-gurel-moq-track-switching/#go.draft-gurel-moq-track-switching.diff)
 
 ## Command Line Usage
 
